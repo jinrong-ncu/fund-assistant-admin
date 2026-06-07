@@ -12,10 +12,13 @@ export type ApiEnvelope<T> = {
   data: T;
 };
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'https://api.liujinrong.cn').replace(
-  /\/$/,
-  ''
-);
+const API_BASE_URL = (() => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '');
+  }
+  // 开发环境使用本地代理
+  return import.meta.env.DEV ? '/api' : 'https://api.liujinrong.cn';
+})();
 
 const TOKEN_KEY = 'fund_admin_token';
 
