@@ -23,6 +23,7 @@ const API_BASE_URL = (() => {
 const TOKEN_KEY = 'fund_admin_token';
 
 export function getToken() {
+  if (typeof window === 'undefined') return '';
   return localStorage.getItem(TOKEN_KEY) || '';
 }
 
@@ -78,4 +79,3 @@ export function jsonPatch(method: 'POST' | 'PUT' | 'DELETE', body?: unknown) {
     body: body === undefined ? undefined : JSON.stringify(body),
   };
 }
-

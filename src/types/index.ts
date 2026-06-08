@@ -65,4 +65,3 @@ export type AuditLog = {
   reason?: string;
   created_at: string;
 };
-
