@@ -1,7 +1,6 @@
-import { Link, Outlet, useRouterState, useNavigate } from '@tanstack/react-router';
+import { Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
 import {
   Activity,
-  BarChart3,
   BookOpen,
   FileClock,
   LayoutDashboard,
@@ -11,7 +10,24 @@ import {
   Star,
   Users,
 } from 'lucide-react';
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Chip,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { useAuth } from '../lib/auth';
+
+const drawerWidth = 256;
 
 const navItems = [
   { to: '/dashboard', label: '概览', icon: LayoutDashboard },
@@ -39,8 +55,7 @@ export function AdminLayout() {
   const navigate = useNavigate();
 
   const currentPath = routerState.location.pathname;
-  // Dynamic page title matching nested paths as well (e.g. /funds/000001)
-  const matchedKey = Object.keys(pathMap).find(key => currentPath.startsWith(key)) || '';
+  const matchedKey = Object.keys(pathMap).find((key) => currentPath.startsWith(key)) || '';
   const title = pathMap[matchedKey] || '概览';
 
   async function handleLogout() {
@@ -53,64 +68,135 @@ export function AdminLayout() {
   }
 
   return (
-    <div className="grid grid-cols-[248px_1fr] min-h-screen bg-[#f5f7fb]">
-      {/* Sidebar */}
-      <aside className="bg-[#172033] text-[#dce5f5] flex flex-col p-4.5 select-none">
-        <div className="flex items-center gap-3 h-12 px-2.5 mb-6 font-bold text-white text-lg border-b border-white/10">
-          <Activity size={24} className="text-primary-light" />
-          <span>估值助手后台</span>
-        </div>
-        <nav className="flex flex-col gap-1.5 flex-1">
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+            bgcolor: '#172033',
+            color: '#dce5f5',
+            borderRight: 0,
+            p: 2,
+          },
+        }}
+      >
+        <Box sx={{ height: 52, px: 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box
+            sx={{
+              width: 36,
+              height: 36,
+              borderRadius: 2,
+              bgcolor: 'rgba(237, 243, 255, 0.12)',
+              color: '#edf3ff',
+              display: 'grid',
+              placeItems: 'center',
+            }}
+          >
+            <Activity size={24} />
+          </Box>
+          <Box>
+            <Typography variant="subtitle1" color="#ffffff" sx={{ fontWeight: 800, lineHeight: 1.15 }}>
+              估值助手后台
+            </Typography>
+            <Typography variant="caption" color="#8fa2c2">
+              Fund Assistant Admin
+            </Typography>
+          </Box>
+        </Box>
+
+        <Divider sx={{ my: 2, borderColor: 'rgba(255,255,255,0.09)' }} />
+
+        <List disablePadding sx={{ display: 'grid', gap: 0.75 }}>
           {navItems.map((item) => {
             const Icon = item.icon;
+            const selected = currentPath.startsWith(item.to);
             return (
-              <Link
+              <ListItemButton
                 key={item.to}
+                component={Link}
                 to={item.to}
-                className="flex items-center gap-3 h-11.5 px-3 rounded-md text-[#b8c3d8] bg-transparent border-0 hover:bg-[#26344f] hover:text-white transition-all text-left text-[15px] font-medium w-full cursor-pointer decoration-none"
-                activeProps={{ className: 'flex items-center gap-3 h-11.5 px-3 rounded-md text-white bg-[#26344f] text-[15px] font-semibold border-0 text-left w-full cursor-pointer decoration-none !text-white' }}
+                selected={selected}
+                sx={{
+                  minHeight: 46,
+                  borderRadius: 2,
+                  color: selected ? '#ffffff' : '#b8c3d8',
+                  textDecoration: 'none',
+                  '&.Mui-selected': {
+                    bgcolor: '#26344f',
+                    color: '#ffffff',
+                  },
+                  '&.Mui-selected:hover, &:hover': {
+                    bgcolor: '#26344f',
+                    color: '#ffffff',
+                  },
+                }}
               >
-                <Icon size={20} />
-                <span>{item.label}</span>
-              </Link>
+                <ListItemIcon sx={{ minWidth: 38, color: 'inherit' }}>
+                  <Icon size={21} />
+                </ListItemIcon>
+                <Typography sx={{ fontSize: 15, fontWeight: selected ? 800 : 650 }}>
+                  {item.label}
+                </Typography>
+              </ListItemButton>
             );
           })}
-        </nav>
-      </aside>
+        </List>
+      </Drawer>
 
-      {/* Main Content Area */}
-      <div className="flex flex-col min-w-0">
-        {/* Topbar */}
-        <header className="flex items-center justify-between h-14.5 px-6 bg-white border-b border-borderBase">
-          <div className="text-sm font-medium text-textMuted">
-            <span>后台</span>
-            <span className="mx-2 text-gray-300">/</span>
-            <span className="text-textMain font-semibold">{title}</span>
-          </div>
-          <div className="flex items-center gap-4">
-            {admin && (
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-textMain">{admin.email}</span>
-                <span className="px-2.5 py-0.75 text-xs font-semibold rounded-full bg-primary-light text-primary border border-primary-border/20">
-                  {admin.role}
-                </span>
-              </div>
-            )}
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center justify-center w-8.5 h-8.5 rounded-md bg-white border border-[#d4dbea] text-[#34425b] hover:bg-gray-50 hover:border-[#b0bfd6] cursor-pointer transition-all"
-              aria-label="退出登录"
-            >
-              <LogOut size={16} />
-            </button>
-          </div>
-        </header>
+      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <AppBar
+          position="sticky"
+          color="inherit"
+          elevation={0}
+          sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#ffffff' }}
+        >
+          <Toolbar sx={{ minHeight: '58px !important', px: 3, justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 700 }}>
+                后台
+              </Typography>
+              <Typography variant="body2" color="#c7cfdd">
+                /
+              </Typography>
+              <Typography variant="body2" color="text.primary" sx={{ fontWeight: 800 }}>
+                {title}
+              </Typography>
+            </Box>
 
-        {/* Dynamic page contents */}
-        <main className="p-6 flex-1 overflow-auto">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              {admin && (
+                <>
+                  <Avatar sx={{ width: 30, height: 30, bgcolor: 'primary.light', color: 'primary.main', fontSize: 13 }}>
+                    {admin.email.slice(0, 1).toUpperCase()}
+                  </Avatar>
+                  <Typography variant="body2" color="text.primary" sx={{ fontWeight: 700 }}>
+                    {admin.email}
+                  </Typography>
+                  <Chip label={admin.role} size="small" color="primary" variant="outlined" sx={{ fontWeight: 800 }} />
+                </>
+              )}
+              <Tooltip title="退出登录">
+                <IconButton
+                  onClick={handleLogout}
+                  size="medium"
+                  sx={{ border: '1px solid', borderColor: '#d4dbea', borderRadius: 2 }}
+                  aria-label="退出登录"
+                >
+                  <LogOut size={18} />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Toolbar>
+        </AppBar>
+
+        <Box component="main" sx={{ flex: 1, minWidth: 0, p: 3 }}>
           <Outlet />
-        </main>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }

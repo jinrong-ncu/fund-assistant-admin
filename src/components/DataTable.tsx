@@ -1,5 +1,16 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { Loader2 } from 'lucide-react';
+import {
+  Box,
+  Card,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -19,62 +30,95 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="relative border border-[#dfe4ee] rounded-lg bg-white overflow-hidden shadow-sm">
-      {/* Loading overlay */}
+    <Card
+      variant="outlined"
+      sx={{
+        position: 'relative',
+        overflow: 'hidden',
+        borderColor: '#dfe4ee',
+      }}
+    >
       {loading && (
-        <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex items-center justify-center z-10 transition-opacity">
-          <div className="flex flex-col items-center gap-2 text-[#2458c6]">
-            <Loader2 className="w-8 h-8 animate-spin" />
-            <span className="text-xs font-semibold">正在努力加载数据...</span>
-          </div>
-        </div>
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 2,
+            bgcolor: 'rgba(255,255,255,0.72)',
+            backdropFilter: 'blur(1px)',
+            display: 'grid',
+            placeItems: 'center',
+          }}
+        >
+          <Box sx={{ display: 'grid', justifyItems: 'center', gap: 1, color: 'primary.main' }}>
+            <CircularProgress size={32} thickness={4} />
+            <Typography variant="caption" sx={{ fontWeight: 800 }}>
+              正在努力加载数据...
+            </Typography>
+          </Box>
+        </Box>
       )}
 
-      <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-180 border-collapse text-left text-xs">
-          <thead>
+      <TableContainer sx={{ maxWidth: '100%', overflowX: 'auto' }}>
+        <Table sx={{ minWidth: 760, borderCollapse: 'separate', borderSpacing: 0 }}>
+          <TableHead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="bg-[#f8fafd] border-b border-[#edf0f6]">
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th
+                  <TableCell
                     key={header.id}
-                    className="px-4 py-3 font-semibold text-[#5f6b7d] uppercase tracking-wider"
+                    sx={{
+                      py: 1.75,
+                      px: 2,
+                      borderBottom: '1px solid #dfe4ee',
+                      whiteSpace: 'nowrap',
+                      letterSpacing: 0,
+                    }}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
+                  </TableCell>
                 ))}
-              </tr>
+              </TableRow>
             ))}
-          </thead>
-          <tbody>
+          </TableHead>
+          <TableBody>
             {table.getRowModel().rows.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={columns.length}
-                  className="px-4 py-12 text-center text-[#7b8798] bg-white text-sm"
-                >
+              <TableRow>
+                <TableCell colSpan={columns.length} sx={{ py: 7, textAlign: 'center', color: 'text.secondary' }}>
                   {loading ? '加载中...' : '暂无数据'}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr
+                <TableRow
                   key={row.id}
-                  className="border-b border-[#edf0f6] hover:bg-[#edf3ff]/20 transition-colors duration-150 last:border-b-0"
+                  hover
+                  sx={{
+                    '&:last-child td': { borderBottom: 0 },
+                    '&:hover td': { bgcolor: '#f8fbff' },
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3 text-[#263248] align-middle">
+                    <TableCell
+                      key={cell.id}
+                      sx={{
+                        py: 1.65,
+                        px: 2,
+                        borderBottom: '1px solid #edf0f6',
+                        verticalAlign: 'middle',
+                      }}
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
+                    </TableCell>
                   ))}
-                </tr>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Card>
   );
 }

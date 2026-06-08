@@ -2,13 +2,28 @@ import React, { useState } from 'react';
 import {
   CheckCircle2,
   Edit3,
-  Loader2,
   Plus,
   RefreshCw,
   Save,
   Trash2,
   X,
 } from 'lucide-react';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  FormControlLabel,
+  IconButton,
+  MenuItem,
+  Select,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { useChangelogs, useUpdateChangelog } from '../hooks/queries';
 import { Changelog } from '../types';
 
@@ -18,11 +33,6 @@ const DETAIL_TYPES = [
   { value: 'bugfix', label: '修复' },
   { value: 'notice', label: '说明' },
 ];
-
-const iconButtonClass =
-  'inline-flex items-center justify-center h-10 min-w-10 px-3 rounded-md bg-white border border-[#b8c4d8] text-[#263248] hover:bg-gray-50 hover:border-[#8fa0bb] transition-all disabled:opacity-50 disabled:pointer-events-none';
-const actionButtonClass =
-  'inline-flex items-center justify-center gap-1.5 h-10 px-3.5 rounded-md bg-white border border-[#b8c4d8] text-[#263248] text-xs font-semibold hover:bg-gray-50 hover:border-[#8fa0bb] transition-all disabled:opacity-50 disabled:pointer-events-none';
 
 function typeLabel(type: string) {
   return DETAIL_TYPES.find((item) => item.value === type)?.label || type || '说明';
@@ -99,44 +109,52 @@ export default function ChangelogPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-textMain">更新日志</h2>
-          <p className="text-xs text-textMuted mt-1">查看和维护小程序版本内容</p>
-        </div>
-        <button
-          onClick={() => refetch()}
-          className={iconButtonClass}
-          disabled={isLoading || isFetching || saving}
-          aria-label="刷新日志"
-        >
-          <RefreshCw size={18} className={isLoading || isFetching ? 'animate-spin text-primary' : ''} />
-        </button>
-      </div>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box>
+          <Typography variant="h5" sx={{ fontSize: 22, fontWeight: 850, color: 'text.primary' }}>
+            更新日志
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 0.75, color: 'text.secondary', fontSize: 13 }}>
+            查看和维护小程序版本内容
+          </Typography>
+        </Box>
+        <Tooltip title="刷新日志">
+          <span>
+            <IconButton
+              onClick={() => refetch()}
+              disabled={isLoading || isFetching || saving}
+              aria-label="刷新日志"
+              sx={{ width: 42, height: 42, border: '1px solid', borderColor: '#cfd7e6', borderRadius: 2 }}
+            >
+              <RefreshCw size={19} className={isLoading || isFetching ? 'animate-spin text-primary' : ''} />
+            </IconButton>
+          </span>
+        </Tooltip>
+      </Box>
 
       {isError && (
-        <div className="p-4 rounded-md bg-red-50 border border-red-200 text-xs text-red-600">
+        <Alert severity="error">
           加载更新日志失败: {error?.message || '未知错误'}
-        </div>
+        </Alert>
       )}
 
       {updateMutation.isError && (
-        <div className="p-4 rounded-md bg-red-50 border border-red-200 text-xs text-red-600">
+        <Alert severity="error">
           保存更新日志失败: {updateMutation.error?.message || '未知错误'}
-        </div>
+        </Alert>
       )}
 
-      <div className="relative bg-white border border-borderBase rounded-lg overflow-hidden shadow-sm">
+      <Card variant="outlined" sx={{ position: 'relative', overflow: 'hidden' }}>
         {(isLoading || isFetching) && (
           <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex items-center justify-center z-10">
             <div className="flex flex-col items-center gap-2 text-primary">
-              <Loader2 className="w-8 h-8 animate-spin" />
+              <CircularProgress size={32} thickness={4} />
               <span className="text-xs font-semibold">正在努力加载数据...</span>
             </div>
           </div>
         )}
 
-        <div className="grid grid-cols-[160px_150px_120px_minmax(360px,1fr)_168px] bg-[#f8fafd] border-b border-[#edf0f6] text-xs font-semibold text-[#5f6b7d] uppercase tracking-wider min-w-280">
+        <div className="grid grid-cols-[160px_150px_120px_minmax(420px,1fr)_168px] bg-[#f8fafd] border-b border-[#dfe4ee] text-xs font-semibold text-[#5f6b7d] min-w-300">
           <div className="px-4 py-3">版本</div>
           <div className="px-4 py-3">日期</div>
           <div className="px-4 py-3">最新版本</div>
@@ -150,21 +168,23 @@ export default function ChangelogPage() {
               {isLoading ? '加载中...' : '暂无数据'}
             </div>
           ) : (
-            <div className="min-w-260">
+            <div className="min-w-300">
               {logs.map((log) => {
                 const isEditing = editingId === log.id && draft;
                 const visible = isEditing ? draft : log;
                 return (
                   <div
                     key={log.id}
-                    className="grid grid-cols-[160px_150px_120px_minmax(360px,1fr)_168px] border-b border-[#edf0f6] last:border-b-0 text-xs text-[#263248] hover:bg-[#edf3ff]/20"
+                    className="grid grid-cols-[160px_150px_120px_minmax(420px,1fr)_168px] border-b border-[#edf0f6] last:border-b-0 text-xs text-[#263248] hover:bg-[#f8fbff]"
                   >
                     <div className="px-4 py-4">
                       {isEditing ? (
-                        <input
-                          className="input-base w-full h-8 text-xs"
+                        <TextField
+                          size="small"
                           value={visible.version}
                           onChange={(event) => setDraft({ ...visible, version: event.target.value })}
+                          fullWidth
+                          slotProps={{ input: { sx: { fontSize: 13, fontWeight: 700 } } }}
                         />
                       ) : (
                         <span className="font-semibold text-textMain">{log.version}</span>
@@ -173,11 +193,13 @@ export default function ChangelogPage() {
 
                     <div className="px-4 py-4">
                       {isEditing ? (
-                        <input
-                          className="input-base w-full h-8 text-xs"
+                        <TextField
+                          size="small"
                           type="date"
                           value={visible.publish_date}
                           onChange={(event) => setDraft({ ...visible, publish_date: event.target.value })}
+                          fullWidth
+                          slotProps={{ input: { sx: { fontSize: 13 } } }}
                         />
                       ) : (
                         log.publish_date
@@ -186,20 +208,26 @@ export default function ChangelogPage() {
 
                     <div className="px-4 py-4">
                       {isEditing ? (
-                        <label className="inline-flex items-center gap-2 text-xs font-medium text-[#34425b]">
-                          <input
-                            type="checkbox"
-                            className="h-4 w-4"
-                            checked={visible.is_latest}
-                            onChange={(event) => setDraft({ ...visible, is_latest: event.target.checked })}
-                          />
-                          最新
-                        </label>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              size="small"
+                              checked={visible.is_latest}
+                              onChange={(event) => setDraft({ ...visible, is_latest: event.target.checked })}
+                            />
+                          }
+                          label="最新"
+                          sx={{ m: 0, '& .MuiFormControlLabel-label': { fontSize: 13, fontWeight: 700 } }}
+                        />
                       ) : log.is_latest ? (
-                        <span className="text-green-600 inline-flex items-center gap-1.5 font-medium text-xs">
-                          <CheckCircle2 size={16} />
-                          <span>最新</span>
-                        </span>
+                        <Chip
+                          icon={<CheckCircle2 size={15} />}
+                          label="最新"
+                          size="small"
+                          color="success"
+                          variant="outlined"
+                          sx={{ fontWeight: 800 }}
+                        />
                       ) : (
                         <span className="text-textMuted">-</span>
                       )}
@@ -207,51 +235,71 @@ export default function ChangelogPage() {
 
                     <div className="px-4 py-4">
                       {isEditing ? (
-                        <div className="grid gap-2">
+                        <div className="grid gap-2.5">
                           {visible.details.map((detail, index) => (
-                            <div key={`${log.id}-${index}`} className="grid grid-cols-[108px_minmax(0,1fr)_34px] gap-2">
-                              <select
-                                className="input-base h-8 text-xs"
+                            <div key={`${log.id}-${index}`} className="grid grid-cols-[116px_minmax(0,1fr)_40px] gap-2.5">
+                              <Select
+                                size="small"
                                 value={detail.type}
                                 onChange={(event) => updateDetail(index, 'type', event.target.value)}
+                                sx={{ fontSize: 13 }}
                               >
                                 {DETAIL_TYPES.map((item) => (
-                                  <option key={item.value} value={item.value}>
+                                  <MenuItem key={item.value} value={item.value}>
                                     {item.label}
-                                  </option>
+                                  </MenuItem>
                                 ))}
-                              </select>
-                              <input
-                                className="input-base h-8 text-xs w-full"
+                              </Select>
+                              <TextField
+                                size="small"
                                 value={detail.content}
                                 onChange={(event) => updateDetail(index, 'content', event.target.value)}
+                                fullWidth
+                                slotProps={{ input: { sx: { fontSize: 13 } } }}
                               />
-                              <button
-                                className={iconButtonClass}
-                                onClick={() => removeDetail(index)}
-                                disabled={visible.details.length <= 1 || saving}
-                                aria-label="删除条目"
-                              >
-                                <Trash2 size={16} />
-                              </button>
+                              <Tooltip title="删除条目">
+                                <span>
+                                  <IconButton
+                                    onClick={() => removeDetail(index)}
+                                    disabled={visible.details.length <= 1 || saving}
+                                    aria-label="删除条目"
+                                    size="small"
+                                    sx={{ width: 38, height: 38, border: '1px solid', borderColor: '#cfd7e6', borderRadius: 2 }}
+                                  >
+                                    <Trash2 size={16} />
+                                  </IconButton>
+                                </span>
+                              </Tooltip>
                             </div>
                           ))}
-                          <button
-                            className="btn-secondary h-8 w-fit px-3 text-xs"
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            startIcon={<Plus size={15} />}
                             onClick={addDetail}
                             disabled={saving}
+                            sx={{ width: 'fit-content', fontSize: 12, fontWeight: 800 }}
                           >
-                            <Plus size={14} />
                             添加条目
-                          </button>
+                          </Button>
                         </div>
                       ) : (
-                        <div className="grid gap-2">
+                        <div className="grid gap-2.25">
                           {log.details.map((detail, index) => (
                             <div key={`${log.id}-${index}`} className="flex items-start gap-2 leading-5">
-                              <span className="shrink-0 px-2 py-0.5 rounded bg-gray-100 text-gray-700 font-semibold text-[11px]">
-                                {typeLabel(detail.type)}
-                              </span>
+                              <Chip
+                                label={typeLabel(detail.type)}
+                                size="small"
+                                variant="outlined"
+                                sx={{
+                                  flexShrink: 0,
+                                  height: 22,
+                                  borderRadius: 1.5,
+                                  bgcolor: '#f8fafd',
+                                  fontSize: 11,
+                                  fontWeight: 800,
+                                }}
+                              />
                               <span className="text-[#34425b] break-all">{detail.content}</span>
                             </div>
                           ))}
@@ -262,36 +310,39 @@ export default function ChangelogPage() {
                     <div className="px-4 py-4">
                       {isEditing ? (
                         <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            className={actionButtonClass}
+                          <Button
+                            variant="contained"
+                            size="medium"
+                            startIcon={saving ? <CircularProgress size={16} color="inherit" /> : <Save size={16} />}
                             onClick={saveDraft}
                             disabled={saving}
                             aria-label="保存"
                           >
-                            {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                             保存
-                          </button>
-                          <button
-                            className={actionButtonClass}
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            size="medium"
+                            startIcon={<X size={16} />}
                             onClick={cancelEdit}
                             disabled={saving}
                             aria-label="取消"
                           >
-                            <X size={16} />
                             取消
-                          </button>
+                          </Button>
                         </div>
                       ) : (
                         <div className="flex justify-end">
-                          <button
-                            className={actionButtonClass}
+                          <Button
+                            variant="outlined"
+                            size="medium"
+                            startIcon={<Edit3 size={16} />}
                             onClick={() => startEdit(log)}
                             disabled={saving}
                             aria-label="编辑"
                           >
-                            <Edit3 size={16} />
                             编辑
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -301,7 +352,7 @@ export default function ChangelogPage() {
             </div>
           )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
