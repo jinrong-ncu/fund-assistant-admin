@@ -128,6 +128,27 @@ export function useChangelogs() {
   });
 }
 
+export function useUpdateChangelog() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (item: Changelog) =>
+      adminRequest<Changelog>(
+        '/api/admin/changelogs',
+        jsonPatch('PUT', {
+          id: item.id,
+          version: item.version,
+          publishDate: item.publish_date,
+          isLatest: item.is_latest,
+          details: item.details,
+          reason: '后台编辑更新日志',
+        })
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['changelogs'] });
+    },
+  });
+}
+
 // ==========================================
 // 6. System Configs Hooks
 // ==========================================

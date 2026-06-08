@@ -25,10 +25,10 @@ export default defineConfig({
   },
   shortcuts: {
     // Layouts & Page Containers
-    'app-shell-layout': 'grid grid-cols-[232px_minmax(0,1fr)] min-h-screen bg-[#f5f7fb]',
-    'sidebar-panel': 'bg-[#172033] text-[#dce5f5] flex flex-col p-4 select-none',
-    'sidebar-item': 'flex items-center gap-2.5 h-9.5 px-2.5 rounded-md text-[#b8c3d8] bg-transparent border-0 hover:bg-[#26344f] hover:text-white transition-all text-left font-medium w-full cursor-pointer',
-    'sidebar-item-active': 'flex items-center gap-2.5 h-9.5 px-2.5 rounded-md text-white bg-[#26344f] font-semibold border-0 text-left w-full cursor-pointer',
+    'app-shell-layout': 'grid grid-cols-[248px_minmax(0,1fr)] min-h-screen bg-[#f5f7fb]',
+    'sidebar-panel': 'bg-[#172033] text-[#dce5f5] flex flex-col p-4.5 select-none',
+    'sidebar-item': 'flex items-center gap-3 h-11.5 px-3 rounded-md text-[#b8c3d8] bg-transparent border-0 hover:bg-[#26344f] hover:text-white transition-all text-left text-[15px] font-medium w-full cursor-pointer',
+    'sidebar-item-active': 'flex items-center gap-3 h-11.5 px-3 rounded-md text-white bg-[#26344f] text-[15px] font-semibold border-0 text-left w-full cursor-pointer',
     'card-base': 'bg-white border border-borderBase rounded-lg p-5.5 shadow-sm transition-all duration-200 hover:shadow-md',
     'metric-icon-wrap': 'w-10.5 h-10.5 rounded-lg bg-primary-light text-primary flex items-center justify-center transition-transform duration-200 hover:scale-105',
 

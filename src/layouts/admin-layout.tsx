@@ -53,24 +53,24 @@ export function AdminLayout() {
   }
 
   return (
-    <div className="grid grid-cols-[232px_1fr] min-h-screen bg-[#f5f7fb]">
+    <div className="grid grid-cols-[248px_1fr] min-h-screen bg-[#f5f7fb]">
       {/* Sidebar */}
-      <aside className="bg-[#172033] text-[#dce5f5] flex flex-col p-4 select-none">
-        <div className="flex items-center gap-2.5 h-11 px-2 mb-6 font-bold text-white text-lg border-b border-white/10">
-          <Activity size={22} className="text-primary-light" />
+      <aside className="bg-[#172033] text-[#dce5f5] flex flex-col p-4.5 select-none">
+        <div className="flex items-center gap-3 h-12 px-2.5 mb-6 font-bold text-white text-lg border-b border-white/10">
+          <Activity size={24} className="text-primary-light" />
           <span>估值助手后台</span>
         </div>
-        <nav className="flex flex-col gap-1 flex-1">
+        <nav className="flex flex-col gap-1.5 flex-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
               <Link
                 key={item.to}
                 to={item.to}
-                className="flex items-center gap-2.5 h-9.5 px-2.5 rounded-md text-[#b8c3d8] bg-transparent border-0 hover:bg-[#26344f] hover:text-white transition-all text-left font-medium w-full cursor-pointer decoration-none"
-                activeProps={{ className: 'flex items-center gap-2.5 h-9.5 px-2.5 rounded-md text-white bg-[#26344f] font-semibold border-0 text-left w-full cursor-pointer decoration-none !text-white' }}
+                className="flex items-center gap-3 h-11.5 px-3 rounded-md text-[#b8c3d8] bg-transparent border-0 hover:bg-[#26344f] hover:text-white transition-all text-left text-[15px] font-medium w-full cursor-pointer decoration-none"
+                activeProps={{ className: 'flex items-center gap-3 h-11.5 px-3 rounded-md text-white bg-[#26344f] text-[15px] font-semibold border-0 text-left w-full cursor-pointer decoration-none !text-white' }}
               >
-                <Icon size={18} />
+                <Icon size={20} />
                 <span>{item.label}</span>
               </Link>
             );
