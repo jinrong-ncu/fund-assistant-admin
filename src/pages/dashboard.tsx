@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from '@tanstack/react-router';
 import { BarChart3, Flag, ListChecks, MessageSquare, RefreshCw, Star, Users } from 'lucide-react';
 import { useDashboardSummary } from '../hooks/queries';
 
@@ -58,10 +59,26 @@ export default function DashboardPage() {
           icon={<ListChecks size={20} />}
         />
         <MetricCard
-          label="提审开关"
-          value={isLoading ? '...' : data?.showMarketIndices ? '完整模式' : '提审模式'}
+          label="安全模式"
+          value={isLoading ? '...' : data?.personalSafeMode ? '已开启' : '已关闭'}
           icon={<Flag size={20} />}
+          tone={isLoading ? 'default' : data?.personalSafeMode ? 'success' : 'muted'}
         />
+      </div>
+
+      <div className="rounded-xl border border-[#d9e2f2] bg-white px-4 py-3 flex items-center justify-between">
+        <div>
+          <div className="text-sm font-semibold text-textMain">需要切换安全模式？</div>
+          <div className="text-xs text-textMuted mt-1">
+            前往系统配置页，直接开启或关闭“个人主体安全模式”。
+          </div>
+        </div>
+        <Link
+          to="/configs"
+          className="inline-flex h-9 items-center rounded-full bg-slate-900 px-4 text-xs font-semibold text-white hover:bg-slate-800 transition-all"
+        >
+          前往配置
+        </Link>
       </div>
     </div>
   );
@@ -71,18 +88,40 @@ function MetricCard({
   label,
   value,
   icon,
+  tone = 'default',
 }: {
   label: string;
   value: React.ReactNode;
   icon: React.ReactNode;
+  tone?: 'default' | 'success' | 'muted';
 }) {
+  const toneClasses =
+    tone === 'success'
+      ? {
+          card: 'border-emerald-200 bg-emerald-50/40',
+          icon: 'bg-emerald-100 text-emerald-700',
+        }
+      : tone === 'muted'
+        ? {
+            card: 'border-slate-200 bg-slate-50/50',
+            icon: 'bg-slate-100 text-slate-600',
+          }
+        : {
+            card: 'border-borderBase bg-white',
+            icon: 'bg-primary-light text-primary',
+          };
+
   return (
-    <div className="bg-white border border-borderBase rounded-lg p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between min-h-24">
+    <div
+      className={`border rounded-lg p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between min-h-24 ${toneClasses.card}`}
+    >
       <div>
         <span className="text-xs text-textMuted font-medium block">{label}</span>
         <strong className="text-2xl font-bold text-textMain block mt-2.5">{value}</strong>
       </div>
-      <div className="w-10.5 h-10.5 rounded-lg bg-primary-light text-primary flex items-center justify-center transition-transform duration-200 hover:scale-105">
+      <div
+        className={`w-10.5 h-10.5 rounded-lg flex items-center justify-center transition-transform duration-200 hover:scale-105 ${toneClasses.icon}`}
+      >
         {icon}
       </div>
     </div>

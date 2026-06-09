@@ -5,6 +5,7 @@ export type DashboardSummary = {
   feedback?: { total: number; open: number };
   hotFundsActive?: number;
   showMarketIndices?: boolean;
+  personalSafeMode?: boolean;
 };
 
 export type UserRow = {
