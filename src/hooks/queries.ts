@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { adminRequest, jsonPatch } from '../services/api';
 import {
   AuditLog,
@@ -23,13 +23,21 @@ export function useDashboardSummary() {
 // ==========================================
 // 2. Users Hooks
 // ==========================================
-export function useUsers(keyword: string) {
-  return useQuery<{ items: UserRow[]; total: number }>({
-    queryKey: ['users', keyword],
-    queryFn: () =>
-      adminRequest<{ items: UserRow[]; total: number }>(
-        `/api/admin/users${keyword ? `?keyword=${encodeURIComponent(keyword)}` : ''}`
-      ),
+export function useUsers(keyword: string, page: number, pageSize: number) {
+  return useQuery<{ items: UserRow[]; total: number; page: number; pageSize: number }>({
+    queryKey: ['users', keyword, page, pageSize],
+    queryFn: () => {
+      const params = new URLSearchParams({
+        page: String(page),
+        pageSize: String(pageSize),
+      });
+      if (keyword) params.set('keyword', keyword);
+
+      return adminRequest<{ items: UserRow[]; total: number; page: number; pageSize: number }>(
+        `/api/admin/users?${params.toString()}`
+      );
+    },
+    placeholderData: keepPreviousData,
   });
 }
 
