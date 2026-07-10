@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AdminUser, fetchMe, login as apiLogin, logout as apiLogout, getToken, clearToken } from '../services/api';
+import { useAuthStore } from '../stores/auth-store';
 
 export interface AuthContextType {
   admin: AdminUser | null;
@@ -12,7 +13,8 @@ export interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [admin, setAdmin] = useState<AdminUser | null>(null);
+  const admin = useAuthStore((state) => state.admin);
+  const setAdmin = useAuthStore((state) => state.setAdmin);
   const [loading, setLoading] = useState(!!getToken());
 
   useEffect(() => {
@@ -20,10 +22,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       return;
     }
+    const handleSessionExpired = () => setAdmin(null);
+    window.addEventListener('admin:session-expired', handleSessionExpired);
     fetchMe()
       .then(setAdmin)
-      .catch(() => clearToken())
+      .catch(() => {
+        clearToken();
+        setAdmin(null);
+      })
       .finally(() => setLoading(false));
+    return () => window.removeEventListener('admin:session-expired', handleSessionExpired);
   }, []);
 
   async function login(email: string, password: string) {

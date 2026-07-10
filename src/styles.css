@@ -337,6 +337,26 @@ table {
   width: 100%;
 }
 
+/* Data-table defaults are intentionally compact; page-specific tables can opt into clearer column widths. */
+.users-table table {
+  table-layout: fixed;
+}
+
+.users-table th:nth-child(1),
+.users-table td:nth-child(1) { width: 230px; }
+.users-table th:nth-child(2),
+.users-table td:nth-child(2) { width: min(34%, 420px); }
+.users-table th:nth-child(3),
+.users-table td:nth-child(3),
+.users-table th:nth-child(4),
+.users-table td:nth-child(4),
+.users-table th:nth-child(5),
+.users-table td:nth-child(5) { width: 90px; text-align: center; }
+.users-table th:nth-child(6),
+.users-table td:nth-child(6) { width: 150px; }
+.users-table td:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.users-table td button { border: 0; background: transparent; box-shadow: none; height: auto; padding: 0; }
+
 th,
 td {
   border-bottom: 1px solid #edf0f6;
@@ -458,4 +478,3 @@ pre {
     padding: 14px;
   }
 }
-

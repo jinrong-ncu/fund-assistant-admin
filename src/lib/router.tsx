@@ -1,4 +1,4 @@
-import { createRootRouteWithContext, createRoute, createRouter, Outlet, redirect } from '@tanstack/react-router';
+import { createHashHistory, createRootRouteWithContext, createRoute, createRouter, Outlet, redirect } from '@tanstack/react-router';
 import { AuthContextType } from './auth';
 import { AdminLayout } from '../layouts/admin-layout';
 import LoginPage from '../pages/login';
@@ -127,6 +127,7 @@ const routeTree = rootRoute.addChildren([
 // 6. Create Router Instance
 export const router = createRouter({
   routeTree,
+  history: createHashHistory(),
   context: {
     auth: undefined!, // Injected at runtime in Providers
   },

@@ -33,10 +33,10 @@ export default defineConfig({
     'metric-icon-wrap': 'w-10.5 h-10.5 rounded-lg bg-primary-light text-primary flex items-center justify-center transition-transform duration-200 hover:scale-105',
 
     // Buttons
-    'btn-base': 'inline-flex items-center justify-center gap-1.5 h-8.5 px-3.5 rounded-md font-medium text-sm transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer',
+    'btn-base': 'inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-md font-semibold text-sm transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer',
     'btn-primary': 'btn-base bg-primary text-white hover:bg-primary-hover border border-transparent shadow-sm shadow-primary/10',
     'btn-secondary': 'btn-base bg-white border border-[#cfd7e6] text-[#28354a] hover:bg-gray-50 hover:border-[#b0bfd6]',
-    'btn-icon': 'btn-base bg-white border border-[#d4dbea] text-[#34425b] p-0 w-8.5 h-8.5 hover:bg-gray-50 hover:border-[#b0bfd6]',
+    'btn-icon': 'btn-base bg-white border border-[#d4dbea] text-[#34425b] p-0 w-10 h-10 hover:bg-gray-50 hover:border-[#b0bfd6]',
     'btn-link': 'bg-transparent border-0 text-primary p-0 h-auto justify-start hover:underline font-medium cursor-pointer',
 
     // Form Elements

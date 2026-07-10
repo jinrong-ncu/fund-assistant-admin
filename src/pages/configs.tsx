@@ -124,12 +124,12 @@ export default function ConfigPage() {
             }}
             className={
               isPrimary
-                ? `inline-flex h-9 items-center rounded-full px-4 text-xs font-semibold cursor-pointer transition-all ${
+                ? `inline-flex h-10 items-center rounded-full px-4 text-sm font-semibold cursor-pointer transition-all ${
                     isOn
                       ? 'bg-slate-900 text-white hover:bg-slate-800'
                       : 'bg-emerald-600 text-white hover:bg-emerald-500'
                   }`
-                : 'btn-secondary h-8 px-3.5 text-xs font-semibold cursor-pointer'
+                : 'btn-secondary h-10 px-4 text-sm font-semibold cursor-pointer'
             }
             disabled={toggleMutation.isPending}
           >
@@ -150,7 +150,7 @@ export default function ConfigPage() {
         </div>
         <button
           onClick={() => refetch()}
-          className="inline-flex items-center justify-center w-8.5 h-8.5 rounded-md bg-white border border-[#d4dbea] text-[#34425b] hover:bg-gray-50 hover:border-[#b0bfd6] cursor-pointer transition-all active:scale-95"
+          className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-white border border-[#d4dbea] text-[#34425b] hover:bg-gray-50 hover:border-[#b0bfd6] cursor-pointer transition-all active:scale-95"
           disabled={isLoading || isFetching}
           aria-label="刷新配置"
         >

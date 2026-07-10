@@ -16,7 +16,7 @@ export default function DashboardPage() {
         </div>
         <button
           onClick={() => refetch()}
-          className="inline-flex items-center justify-center w-8.5 h-8.5 rounded-md bg-white border border-[#d4dbea] text-[#34425b] hover:bg-gray-50 hover:border-[#b0bfd6] cursor-pointer transition-all active:scale-95"
+          className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-white border border-[#d4dbea] text-[#34425b] hover:bg-gray-50 hover:border-[#b0bfd6] cursor-pointer transition-all active:scale-95"
           disabled={isLoading || isFetching}
           aria-label="刷新数据"
         >
@@ -75,7 +75,7 @@ export default function DashboardPage() {
         </div>
         <Link
           to="/configs"
-          className="inline-flex h-9 items-center rounded-full bg-slate-900 px-4 text-xs font-semibold text-white hover:bg-slate-800 transition-all"
+          className="inline-flex h-10 items-center rounded-full bg-slate-900 px-5 text-sm font-semibold text-white hover:bg-slate-800 transition-all"
         >
           前往配置
         </Link>

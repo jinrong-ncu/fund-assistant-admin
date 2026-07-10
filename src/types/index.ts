@@ -1,3 +1,11 @@
+export type AdminUser = {
+  id: string;
+  email: string;
+  name?: string | null;
+  role: string;
+  permissions: string[];
+};
+
 export type DashboardSummary = {
   users?: number;
   holdingsUsers?: number;
@@ -17,9 +25,9 @@ export type UserRow = {
   createdAt?: string;
   created_at?: string;
   updatedAt?: string;
-  holdingsCount?: number;
-  watchlistCount?: number;
-  feedbackCount?: number;
+  holdingsCount: number;
+  watchlistCount: number;
+  feedbackCount: number;
 };
 
 export type FeedbackRow = {

@@ -56,7 +56,7 @@ export default function AuditPage() {
         </div>
         <button
           onClick={() => refetch()}
-          className="inline-flex items-center justify-center w-8.5 h-8.5 rounded-md bg-white border border-[#d4dbea] text-[#34425b] hover:bg-gray-50 hover:border-[#b0bfd6] cursor-pointer transition-all active:scale-95"
+          className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-white border border-[#d4dbea] text-[#34425b] hover:bg-gray-50 hover:border-[#b0bfd6] cursor-pointer transition-all active:scale-95"
           disabled={isLoading || isFetching}
           aria-label="刷新审计日志"
         >

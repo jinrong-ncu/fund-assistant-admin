@@ -14,7 +14,7 @@ export default function NotFoundPage() {
       </p>
       <Link
         to="/dashboard"
-        className="bg-primary text-white hover:bg-primary-hover border border-transparent shadow-sm inline-flex items-center justify-center gap-1.5 h-9.5 px-5 rounded-md font-semibold text-sm transition-all decoration-none active:scale-95"
+        className="bg-primary text-white hover:bg-primary-hover border border-transparent shadow-sm inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-md font-semibold text-sm transition-all decoration-none active:scale-95"
       >
         返回控制台
       </Link>

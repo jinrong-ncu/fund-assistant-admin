@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { adminRequest, jsonPatch } from '../services/api';
+import { jsonRequest, request } from '../services/request';
 import {
   AuditLog,
   Changelog,
@@ -16,7 +16,7 @@ import {
 export function useDashboardSummary() {
   return useQuery<DashboardSummary>({
     queryKey: ['dashboard', 'summary'],
-    queryFn: () => adminRequest<DashboardSummary>('/api/admin/dashboard/summary'),
+      queryFn: () => request<DashboardSummary>('/api/admin/dashboard/summary'),
   });
 }
 
@@ -33,7 +33,7 @@ export function useUsers(keyword: string, page: number, pageSize: number) {
       });
       if (keyword) params.set('keyword', keyword);
 
-      return adminRequest<{ items: UserRow[]; total: number; page: number; pageSize: number }>(
+      return request<{ items: UserRow[]; total: number; page: number; pageSize: number }>(
         `/api/admin/users?${params.toString()}`
       );
     },
@@ -47,10 +47,10 @@ export function useUserDetail(openid: string | null) {
     queryFn: async () => {
       if (!openid) return {};
       const [watchlist, holdings, transactions, feedback] = await Promise.all([
-        adminRequest(`/api/admin/users/${openid}/watchlist`),
-        adminRequest(`/api/admin/users/${openid}/holdings`),
-        adminRequest(`/api/admin/users/${openid}/transactions`),
-        adminRequest(`/api/admin/users/${openid}/feedback`),
+        request(`/api/admin/users/${openid}/watchlist`),
+        request(`/api/admin/users/${openid}/holdings`),
+        request(`/api/admin/users/${openid}/transactions`),
+        request(`/api/admin/users/${openid}/feedback`),
       ]);
       return { watchlist, holdings, transactions, feedback };
     },
@@ -64,7 +64,7 @@ export function useUserDetail(openid: string | null) {
 export function useFeedbacks() {
   return useQuery<{ items: FeedbackRow[] }>({
     queryKey: ['feedbacks'],
-    queryFn: () => adminRequest<{ items: FeedbackRow[] }>('/api/admin/feedback'),
+    queryFn: () => request<{ items: FeedbackRow[] }>('/api/admin/feedback'),
   });
 }
 
@@ -72,7 +72,7 @@ export function useUpdateFeedback() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
-      adminRequest(`/api/admin/feedback/${id}`, jsonPatch('PUT', { status })),
+      request(`/api/admin/feedback/${id}`, jsonRequest('PUT', { status })),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard', 'summary'] });
@@ -86,7 +86,7 @@ export function useUpdateFeedback() {
 export function useHotFunds() {
   return useQuery<HotFund[]>({
     queryKey: ['hot-funds'],
-    queryFn: () => adminRequest<HotFund[]>('/api/admin/hot-funds'),
+    queryFn: () => request<HotFund[]>('/api/admin/hot-funds'),
   });
 }
 
@@ -94,9 +94,9 @@ export function useCreateHotFund() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (form: { fundCode: string; fundName: string; sortOrder: number }) =>
-      adminRequest(
+      request(
         '/api/admin/hot-funds',
-        jsonPatch('POST', { ...form, reason: '后台新增热门基金' })
+        jsonRequest('POST', { ...form, reason: '后台新增热门基金' })
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['hot-funds'] });
@@ -109,9 +109,9 @@ export function useToggleHotFund() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (item: HotFund) =>
-      adminRequest(
+      request(
         `/api/admin/hot-funds/${item.id}`,
-        jsonPatch('PUT', {
+        jsonRequest('PUT', {
           fundCode: item.fund_code,
           fundName: item.fund_name,
           sortOrder: item.sort_order,
@@ -132,7 +132,7 @@ export function useToggleHotFund() {
 export function useChangelogs() {
   return useQuery<Changelog[]>({
     queryKey: ['changelogs'],
-    queryFn: () => adminRequest<Changelog[]>('/api/admin/changelogs'),
+    queryFn: () => request<Changelog[]>('/api/admin/changelogs'),
   });
 }
 
@@ -140,9 +140,9 @@ export function useUpdateChangelog() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (item: Changelog) =>
-      adminRequest<Changelog>(
+      request<Changelog>(
         '/api/admin/changelogs',
-        jsonPatch('PUT', {
+        jsonRequest('PUT', {
           id: item.id,
           version: item.version,
           publishDate: item.publish_date,
@@ -163,7 +163,7 @@ export function useUpdateChangelog() {
 export function useConfigs() {
   return useQuery<SystemConfig[]>({
     queryKey: ['configs'],
-    queryFn: () => adminRequest<SystemConfig[]>('/api/admin/configs'),
+    queryFn: () => request<SystemConfig[]>('/api/admin/configs'),
   });
 }
 
@@ -172,9 +172,9 @@ export function useToggleConfig() {
   return useMutation({
     mutationFn: (item: SystemConfig) => {
       const nextValue = item.value === 'true' ? 'false' : 'true';
-      return adminRequest(
+      return request(
         `/api/admin/configs/${item.key}`,
-        jsonPatch('PUT', {
+        jsonRequest('PUT', {
           value: nextValue,
           description: item.description,
           reason: `后台切换 ${item.key}`,
@@ -194,6 +194,6 @@ export function useToggleConfig() {
 export function useAuditLogs() {
   return useQuery<{ items: AuditLog[] }>({
     queryKey: ['audit-logs'],
-    queryFn: () => adminRequest<{ items: AuditLog[] }>('/api/admin/audit-logs'),
+    queryFn: () => request<{ items: AuditLog[] }>('/api/admin/audit-logs'),
   });
 }

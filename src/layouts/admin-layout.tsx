@@ -1,202 +1,27 @@
 import { Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
-import {
-  Activity,
-  BookOpen,
-  FileClock,
-  LayoutDashboard,
-  LogOut,
-  MessageSquare,
-  Settings,
-  Star,
-  Users,
-} from 'lucide-react';
-import {
-  AppBar,
-  Avatar,
-  Box,
-  Chip,
-  Divider,
-  Drawer,
-  IconButton,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  Toolbar,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Activity, BookOpen, FileClock, LayoutDashboard, LogOut, MessageSquare, Settings, Star, Users } from 'lucide-react';
+import { Button, Avatar, Badge } from '../components/ui';
 import { useAuth } from '../lib/auth';
 
-const drawerWidth = 256;
-
 const navItems = [
-  { to: '/dashboard', label: '概览', icon: LayoutDashboard },
-  { to: '/users', label: '用户', icon: Users },
-  { to: '/feedback', label: '反馈', icon: MessageSquare },
-  { to: '/funds', label: '热门基金', icon: Star },
-  { to: '/changelogs', label: '更新日志', icon: BookOpen },
-  { to: '/configs', label: '系统配置', icon: Settings },
+  { to: '/dashboard', label: '概览', icon: LayoutDashboard }, { to: '/users', label: '用户', icon: Users },
+  { to: '/feedback', label: '反馈', icon: MessageSquare }, { to: '/funds', label: '热门基金', icon: Star },
+  { to: '/changelogs', label: '更新日志', icon: BookOpen }, { to: '/configs', label: '系统配置', icon: Settings },
   { to: '/audit', label: '审计', icon: FileClock },
 ] as const;
-
-const pathMap: Record<string, string> = {
-  '/dashboard': '概览',
-  '/users': '用户管理',
-  '/feedback': '反馈管理',
-  '/funds': '热门基金',
-  '/changelogs': '更新日志',
-  '/configs': '系统配置',
-  '/audit': '操作审计',
-};
+const pathMap: Record<string, string> = { '/dashboard': '概览', '/users': '用户管理', '/feedback': '反馈管理', '/funds': '热门基金', '/changelogs': '更新日志', '/configs': '系统配置', '/audit': '操作审计' };
 
 export function AdminLayout() {
   const { admin, logout } = useAuth();
-  const routerState = useRouterState();
+  const currentPath = useRouterState().location.pathname;
   const navigate = useNavigate();
+  const title = pathMap[Object.keys(pathMap).find((key) => currentPath.startsWith(key)) || ''] || '概览';
 
-  const currentPath = routerState.location.pathname;
-  const matchedKey = Object.keys(pathMap).find((key) => currentPath.startsWith(key)) || '';
-  const title = pathMap[matchedKey] || '概览';
+  async function handleLogout() { await logout().catch(() => undefined); navigate({ to: '/login' }); }
 
-  async function handleLogout() {
-    try {
-      await logout();
-      navigate({ to: '/login' });
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  }
-
-  return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            bgcolor: '#172033',
-            color: '#dce5f5',
-            borderRight: 0,
-            p: 2,
-          },
-        }}
-      >
-        <Box sx={{ height: 52, px: 1, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Box
-            sx={{
-              width: 36,
-              height: 36,
-              borderRadius: 2,
-              bgcolor: 'rgba(237, 243, 255, 0.12)',
-              color: '#edf3ff',
-              display: 'grid',
-              placeItems: 'center',
-            }}
-          >
-            <Activity size={24} />
-          </Box>
-          <Box>
-            <Typography variant="subtitle1" color="#ffffff" sx={{ fontWeight: 800, lineHeight: 1.15 }}>
-              估值助手后台
-            </Typography>
-            <Typography variant="caption" color="#8fa2c2">
-              Fund Assistant Admin
-            </Typography>
-          </Box>
-        </Box>
-
-        <Divider sx={{ my: 2, borderColor: 'rgba(255,255,255,0.09)' }} />
-
-        <List disablePadding sx={{ display: 'grid', gap: 0.75 }}>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const selected = currentPath.startsWith(item.to);
-            return (
-              <ListItemButton
-                key={item.to}
-                component={Link}
-                to={item.to}
-                selected={selected}
-                sx={{
-                  minHeight: 46,
-                  borderRadius: 2,
-                  color: selected ? '#ffffff' : '#b8c3d8',
-                  textDecoration: 'none',
-                  '&.Mui-selected': {
-                    bgcolor: '#26344f',
-                    color: '#ffffff',
-                  },
-                  '&.Mui-selected:hover, &:hover': {
-                    bgcolor: '#26344f',
-                    color: '#ffffff',
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: 38, color: 'inherit' }}>
-                  <Icon size={21} />
-                </ListItemIcon>
-                <Typography sx={{ fontSize: 15, fontWeight: selected ? 800 : 650 }}>
-                  {item.label}
-                </Typography>
-              </ListItemButton>
-            );
-          })}
-        </List>
-      </Drawer>
-
-      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-        <AppBar
-          position="sticky"
-          color="inherit"
-          elevation={0}
-          sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#ffffff' }}
-        >
-          <Toolbar sx={{ minHeight: '58px !important', px: 3, justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 700 }}>
-                后台
-              </Typography>
-              <Typography variant="body2" color="#c7cfdd">
-                /
-              </Typography>
-              <Typography variant="body2" color="text.primary" sx={{ fontWeight: 800 }}>
-                {title}
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              {admin && (
-                <>
-                  <Avatar sx={{ width: 30, height: 30, bgcolor: 'primary.light', color: 'primary.main', fontSize: 13 }}>
-                    {admin.email.slice(0, 1).toUpperCase()}
-                  </Avatar>
-                  <Typography variant="body2" color="text.primary" sx={{ fontWeight: 700 }}>
-                    {admin.email}
-                  </Typography>
-                  <Chip label={admin.role} size="small" color="primary" variant="outlined" sx={{ fontWeight: 800 }} />
-                </>
-              )}
-              <Tooltip title="退出登录">
-                <IconButton
-                  onClick={handleLogout}
-                  size="medium"
-                  sx={{ border: '1px solid', borderColor: '#d4dbea', borderRadius: 2 }}
-                  aria-label="退出登录"
-                >
-                  <LogOut size={18} />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Toolbar>
-        </AppBar>
-
-        <Box component="main" sx={{ flex: 1, minWidth: 0, p: 3 }}>
-          <Outlet />
-        </Box>
-      </Box>
-    </Box>
-  );
+  return <div className="flex min-h-screen bg-background"><aside className="hidden w-56 shrink-0 flex-col bg-[#172033] p-4 text-slate-200 md:flex">
+    <div className="flex h-12 items-center gap-3 px-2"><div className="grid h-9 w-9 place-items-center rounded-lg bg-white/10 text-white"><Activity size={21} /></div><div><div className="font-extrabold leading-tight text-white">估值助手后台</div><div className="text-[11px] text-slate-400">Fund Assistant Admin</div></div></div>
+    <div className="my-5 border-t border-white/10" />
+    <nav className="grid gap-1.5">{navItems.map((item) => { const Icon = item.icon; const selected = currentPath.startsWith(item.to); return <Link key={item.to} to={item.to} className={`flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${selected ? 'bg-[#26344f] text-white' : 'text-slate-400 hover:bg-[#26344f] hover:text-white'}`}><Icon size={19} />{item.label}</Link>; })}</nav>
+  </aside><div className="flex min-w-0 flex-1 flex-col"><header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-borderBase bg-white/95 px-4 backdrop-blur md:px-7"><div className="text-sm"><span className="font-semibold text-textMuted">后台</span><span className="mx-2 text-slate-300">/</span><span className="font-extrabold text-textMain">{title}</span></div><div className="flex items-center gap-2.5">{admin && <><Avatar>{admin.email.slice(0, 1).toUpperCase()}</Avatar><span className="hidden text-sm font-bold text-textMain sm:inline">{admin.email}</span><Badge>{admin.role}</Badge></>}<Button variant="outline" className="h-10 w-10 px-0" onClick={handleLogout} aria-label="退出登录"><LogOut size={16} /></Button></div></header><nav className="flex gap-1 overflow-x-auto border-b border-borderBase bg-white px-3 py-2 md:hidden">{navItems.map((item) => { const Icon = item.icon; const selected = currentPath.startsWith(item.to); return <Link key={item.to} to={item.to} className={`flex shrink-0 items-center gap-1.5 rounded-md px-3 py-2 text-xs font-semibold ${selected ? 'bg-primary-light text-primary' : 'text-textMuted'}`}><Icon size={14} />{item.label}</Link>; })}</nav><main className="min-w-0 flex-1 px-3 py-5 sm:px-5 md:px-7 md:py-7"><div className="mx-auto w-full max-w-[1700px]"><Outlet /></div></main></div></div>;
 }

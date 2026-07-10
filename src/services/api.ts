@@ -1,59 +1,13 @@
-export type AdminUser = {
-  id: string;
-  email: string;
-  name?: string | null;
-  role: string;
-  permissions: string[];
-};
+import { request, jsonRequest } from './request';
+import { AdminUser } from '../types';
+import { clearToken, setToken, getToken } from './auth-storage';
 
-export type ApiEnvelope<T> = {
-  code: number;
-  message: string;
-  data: T;
-};
+export { clearToken, getToken } from './auth-storage';
+export type { AdminUser } from '../types';
+export type { ApiEnvelope } from './request';
 
-const API_BASE_URL = (() => {
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '');
-  }
-  // 开发环境使用本地代理
-  return import.meta.env.DEV ? '/api' : 'https://api.liujinrong.cn';
-})();
-
-const TOKEN_KEY = 'fund_admin_token';
-
-export function getToken() {
-  if (typeof window === 'undefined') return '';
-  return localStorage.getItem(TOKEN_KEY) || '';
-}
-
-export function setToken(token: string) {
-  localStorage.setItem(TOKEN_KEY, token);
-}
-
-export function clearToken() {
-  localStorage.removeItem(TOKEN_KEY);
-}
-
-export async function adminRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const token = getToken();
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers || {}),
-    },
-  });
-  const payload = (await response.json()) as ApiEnvelope<T>;
-  if (!response.ok || payload.code !== 0) {
-    throw new Error(payload.message || 'Request failed');
-  }
-  return payload.data;
-}
-
-export async function login(email: string, password: string) {
-  const data = await adminRequest<{ token: string; admin: AdminUser }>('/api/admin/auth/login', {
+export async function login(email: string, password: string): Promise<AdminUser> {
+  const data = await request<{ token: string; admin: AdminUser }>('/api/admin/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
@@ -61,21 +15,16 @@ export async function login(email: string, password: string) {
   return data.admin;
 }
 
-export async function fetchMe() {
-  return adminRequest<AdminUser>('/api/admin/auth/me');
+export function fetchMe(): Promise<AdminUser> {
+  return request<AdminUser>('/api/admin/auth/me');
 }
 
-export async function logout() {
+export async function logout(): Promise<void> {
   try {
-    await adminRequest('/api/admin/auth/logout', { method: 'POST' });
+    await request('/api/admin/auth/logout', { method: 'POST' });
   } finally {
     clearToken();
   }
 }
 
-export function jsonPatch(method: 'POST' | 'PUT' | 'DELETE', body?: unknown) {
-  return {
-    method,
-    body: body === undefined ? undefined : JSON.stringify(body),
-  };
-}
+export { jsonRequest };
