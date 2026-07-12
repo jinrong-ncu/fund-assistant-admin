@@ -7,8 +7,22 @@ import {
   FeedbackRow,
   HotFund,
   SystemConfig,
+  ResourceEntry,
   UserRow,
 } from '../types';
+
+export function useResources() {
+  return useQuery<ResourceEntry[]>({ queryKey: ['resources'], queryFn: () => request<ResourceEntry[]>('/api/admin/resources') });
+}
+
+export function useResourceMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ method, id, payload }: { method: 'POST' | 'PUT' | 'DELETE'; id?: string; payload?: any }) =>
+      request(`/api/admin/resources${id ? `/${id}` : ''}`, jsonRequest(method, { ...payload, reason: payload?.reason || '后台管理资源入口' })),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['resources'] }),
+  });
+}
 
 // ==========================================
 // 1. Dashboard Hooks
@@ -170,8 +184,8 @@ export function useConfigs() {
 export function useToggleConfig() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (item: SystemConfig) => {
-      const nextValue = item.value === 'true' ? 'false' : 'true';
+    mutationFn: (item: SystemConfig & { nextValue?: string }) => {
+      const nextValue = item.nextValue ?? (item.value === 'true' ? 'false' : 'true');
       return request(
         `/api/admin/configs/${item.key}`,
         jsonRequest('PUT', {

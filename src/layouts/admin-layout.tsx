@@ -1,15 +1,15 @@
 import { Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
-import { Activity, BookOpen, FileClock, LayoutDashboard, LogOut, MessageSquare, Settings, Star, Users } from 'lucide-react';
+import { Activity, BookOpen, FileClock, LayoutDashboard, LogOut, MessageSquare, Settings, Star, Users, Link2 } from 'lucide-react';
 import { Button, Avatar, Badge } from '../components/ui';
 import { useAuth } from '../lib/auth';
 
 const navItems = [
   { to: '/dashboard', label: '概览', icon: LayoutDashboard }, { to: '/users', label: '用户', icon: Users },
   { to: '/feedback', label: '反馈', icon: MessageSquare }, { to: '/funds', label: '热门基金', icon: Star },
-  { to: '/changelogs', label: '更新日志', icon: BookOpen }, { to: '/configs', label: '系统配置', icon: Settings },
+  { to: '/changelogs', label: '更新日志', icon: BookOpen }, { to: '/resources', label: '资源入口', icon: Link2 }, { to: '/configs', label: '系统配置', icon: Settings },
   { to: '/audit', label: '审计', icon: FileClock },
 ] as const;
-const pathMap: Record<string, string> = { '/dashboard': '概览', '/users': '用户管理', '/feedback': '反馈管理', '/funds': '热门基金', '/changelogs': '更新日志', '/configs': '系统配置', '/audit': '操作审计' };
+const pathMap: Record<string, string> = { '/dashboard': '概览', '/users': '用户管理', '/feedback': '反馈管理', '/funds': '热门基金', '/changelogs': '更新日志', '/resources': '资源入口', '/configs': '系统配置', '/audit': '操作审计' };
 
 export function AdminLayout() {
   const { admin, logout } = useAuth();

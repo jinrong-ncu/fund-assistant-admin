@@ -11,6 +11,12 @@ function getConfigLabel(key: string) {
       return '个人主体安全模式';
     case 'show_market_indices':
       return '顶部数据卡片';
+    case 'ocr_enabled':
+      return '截图 OCR 识别';
+    case 'community_qr_code':
+      return '交流社群二维码';
+    case 'support_qr_code':
+      return '支持作者二维码';
     default:
       return key;
   }
@@ -20,9 +26,18 @@ function getConfigValueLabel(item: SystemConfig) {
   if (item.key === 'personal_safe_mode') {
     return item.value === 'true' ? '已开启' : '已关闭';
   }
-  if (item.key === 'show_market_indices') {
-    return item.value === 'true' ? '显示' : '隐藏';
-  }
+    if (item.key === 'show_market_indices') {
+      return item.value === 'true' ? '显示' : '隐藏';
+    }
+    if (item.key === 'ocr_enabled') {
+      return item.value === 'true' ? '已开放' : '已关闭';
+    }
+    if (item.key === 'community_qr_code') {
+      return item.value ? '已配置' : '未配置';
+    }
+    if (item.key === 'support_qr_code') {
+      return item.value ? '已配置' : '未配置';
+    }
   return item.value;
 }
 
@@ -30,9 +45,18 @@ function getConfigActionLabel(item: SystemConfig) {
   if (item.key === 'personal_safe_mode') {
     return item.value === 'true' ? '关闭安全模式' : '开启安全模式';
   }
-  if (item.key === 'show_market_indices') {
-    return item.value === 'true' ? '隐藏数据卡片' : '显示数据卡片';
-  }
+    if (item.key === 'show_market_indices') {
+      return item.value === 'true' ? '隐藏数据卡片' : '显示数据卡片';
+    }
+    if (item.key === 'ocr_enabled') {
+      return item.value === 'true' ? '关闭 OCR' : '开放 OCR';
+    }
+    if (item.key === 'community_qr_code') {
+      return '设置二维码';
+    }
+    if (item.key === 'support_qr_code') {
+      return '设置二维码';
+    }
   return item.value === 'true' ? '关闭' : '开启';
 }
 
@@ -49,6 +73,9 @@ export default function ConfigPage() {
     const priority: Record<string, number> = {
       personal_safe_mode: 0,
       show_market_indices: 1,
+      ocr_enabled: 2,
+      community_qr_code: 3,
+      support_qr_code: 4,
     };
     items.sort((a, b) => {
       const aPriority = priority[a.key] ?? 99;
@@ -80,7 +107,7 @@ export default function ConfigPage() {
       accessorKey: 'key',
       cell: ({ row }) => (
         <div className="flex flex-col gap-1">
-          <span className="font-semibold text-textMain">{getConfigLabel(row.original.key)}</span>
+              <span className="font-semibold text-textMain">{getConfigLabel(row.original.key)}</span>
           <code className="text-[11px] text-textMuted font-mono">{row.original.key}</code>
         </div>
       ),
@@ -114,11 +141,19 @@ export default function ConfigPage() {
     {
       header: '操作',
       cell: ({ row }) => {
+        const isBoolean = ['personal_safe_mode', 'show_market_indices', 'ocr_enabled'].includes(row.original.key);
         const isOn = row.original.value === 'true';
         const isPrimary = isPrimaryConfig(row.original.key);
         return (
           <button
             onClick={() => {
+              if (!isBoolean) {
+                const nextValue = window.prompt('请输入二维码图片地址', row.original.value || '');
+                if (nextValue === null) return;
+                setLastChangedKey(row.original.key);
+                toggleMutation.mutate({ ...row.original, nextValue: nextValue.trim() });
+                return;
+              }
               setLastChangedKey(row.original.key);
               toggleMutation.mutate(row.original);
             }}

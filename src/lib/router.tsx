@@ -11,6 +11,7 @@ import ChangelogPage from '../pages/changelogs';
 import ConfigPage from '../pages/configs';
 import AuditPage from '../pages/audit';
 import NotFoundPage from '../pages/not-found';
+import ResourcesPage from '../pages/resources';
 
 interface RouterContext {
   auth: AuthContextType;
@@ -102,6 +103,12 @@ export const configsRoute = createRoute({
   component: ConfigPage,
 });
 
+export const resourcesRoute = createRoute({
+  getParentRoute: () => adminLayoutRoute,
+  path: '/resources',
+  component: ResourcesPage,
+});
+
 export const auditRoute = createRoute({
   getParentRoute: () => adminLayoutRoute,
   path: '/audit',
@@ -120,6 +127,7 @@ const routeTree = rootRoute.addChildren([
     fundDetailRoute,
     changelogsRoute,
     configsRoute,
+    resourcesRoute,
     auditRoute,
   ]),
 ]);

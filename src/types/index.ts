@@ -65,6 +65,19 @@ export type SystemConfig = {
   description?: string | null;
 };
 
+export type ResourceEntry = {
+  id: string;
+  category: 'community' | 'support';
+  channel: string;
+  title: string;
+  description?: string | null;
+  image_url?: string | null;
+  action_type: string;
+  action_value?: string | null;
+  enabled: boolean;
+  sort_order: number;
+};
+
 export type AuditLog = {
   id: string;
   admin_id: string;
