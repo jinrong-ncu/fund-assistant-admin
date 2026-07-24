@@ -9,10 +9,14 @@ function getConfigLabel(key: string) {
   switch (key) {
     case 'personal_safe_mode':
       return '个人主体安全模式';
+    case 'review_mode':
+      return '提审状态';
     case 'show_market_indices':
       return '顶部数据卡片';
     case 'ocr_enabled':
       return '截图 OCR 识别';
+    case 'support_entry_enabled':
+      return '我的页资源入口';
     case 'community_qr_code':
       return '交流社群二维码';
     case 'support_qr_code':
@@ -26,11 +30,17 @@ function getConfigValueLabel(item: SystemConfig) {
   if (item.key === 'personal_safe_mode') {
     return item.value === 'true' ? '已开启' : '已关闭';
   }
+    if (item.key === 'review_mode') {
+      return item.value === 'true' ? '已开启' : '已关闭';
+    }
     if (item.key === 'show_market_indices') {
       return item.value === 'true' ? '显示' : '隐藏';
     }
     if (item.key === 'ocr_enabled') {
       return item.value === 'true' ? '已开放' : '已关闭';
+    }
+    if (item.key === 'support_entry_enabled') {
+      return item.value === 'true' ? '已显示' : '已隐藏';
     }
     if (item.key === 'community_qr_code') {
       return item.value ? '已配置' : '未配置';
@@ -45,11 +55,17 @@ function getConfigActionLabel(item: SystemConfig) {
   if (item.key === 'personal_safe_mode') {
     return item.value === 'true' ? '关闭安全模式' : '开启安全模式';
   }
+    if (item.key === 'review_mode') {
+      return item.value === 'true' ? '关闭提审状态' : '开启提审状态';
+    }
     if (item.key === 'show_market_indices') {
       return item.value === 'true' ? '隐藏数据卡片' : '显示数据卡片';
     }
     if (item.key === 'ocr_enabled') {
       return item.value === 'true' ? '关闭 OCR' : '开放 OCR';
+    }
+    if (item.key === 'support_entry_enabled') {
+      return item.value === 'true' ? '隐藏入口' : '显示入口';
     }
     if (item.key === 'community_qr_code') {
       return '设置二维码';
@@ -64,6 +80,10 @@ function isPrimaryConfig(key: string) {
   return key === 'personal_safe_mode';
 }
 
+function isBooleanConfig(key: string) {
+  return ['personal_safe_mode', 'review_mode', 'show_market_indices', 'ocr_enabled', 'support_entry_enabled'].includes(key);
+}
+
 export default function ConfigPage() {
   const { data, isLoading, isError, error, refetch, isFetching } = useConfigs();
   const toggleMutation = useToggleConfig();
@@ -72,10 +92,12 @@ export default function ConfigPage() {
     const items = [...(data || [])];
     const priority: Record<string, number> = {
       personal_safe_mode: 0,
-      show_market_indices: 1,
-      ocr_enabled: 2,
-      community_qr_code: 3,
-      support_qr_code: 4,
+      review_mode: 1,
+      show_market_indices: 2,
+      ocr_enabled: 3,
+      support_entry_enabled: 4,
+      community_qr_code: 5,
+      support_qr_code: 6,
     };
     items.sort((a, b) => {
       const aPriority = priority[a.key] ?? 99;
@@ -141,7 +163,7 @@ export default function ConfigPage() {
     {
       header: '操作',
       cell: ({ row }) => {
-        const isBoolean = ['personal_safe_mode', 'show_market_indices', 'ocr_enabled'].includes(row.original.key);
+        const isBoolean = isBooleanConfig(row.original.key);
         const isOn = row.original.value === 'true';
         const isPrimary = isPrimaryConfig(row.original.key);
         return (
