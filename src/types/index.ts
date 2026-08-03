@@ -8,6 +8,7 @@ export type AdminUser = {
 
 export type DashboardSummary = {
   users?: number;
+  newUsersToday?: number;
   holdingsUsers?: number;
   watchlistUsers?: number;
   feedback?: { total: number; open: number };

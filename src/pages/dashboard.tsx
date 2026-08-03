@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@tanstack/react-router';
-import { BarChart3, Flag, ListChecks, MessageSquare, RefreshCw, Star, Users } from 'lucide-react';
+import { BarChart3, Flag, ListChecks, MessageSquare, RefreshCw, Star, UserPlus, Users } from 'lucide-react';
 import { useDashboardSummary } from '../hooks/queries';
 
 export default function DashboardPage() {
@@ -37,6 +37,11 @@ export default function DashboardPage() {
           label="用户总数"
           value={isLoading ? '...' : data?.users ?? '-'}
           icon={<Users size={20} />}
+        />
+        <MetricCard
+          label="今日新增"
+          value={isLoading ? '...' : data?.newUsersToday ?? '-'}
+          icon={<UserPlus size={20} />}
         />
         <MetricCard
           label="持仓用户"
