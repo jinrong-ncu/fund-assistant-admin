@@ -1,67 +1,47 @@
-# 估值助手后台
+# 估值助手管理后台
 
-独立 Web Admin，用于管理估值助手小程序的用户、反馈、热门基金、更新日志、系统配置和审计记录。
+面向单人维护的独立 Web 管理端，用于查看用户数据、处理反馈以及调整小程序内容和系统配置。
 
 ## 本地运行
+
+先在 `fund-assistant` 仓库启动后端：
+
+```bash
+vercel dev --listen 3000
+```
+
+再启动管理端：
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-默认后端：
+浏览器访问 `http://localhost:5174`。开发环境会自动把 `/api` 请求代理到 `http://localhost:3000`。
+
+## 环境变量
+
+生产部署时配置：
 
 ```text
-https://api.liujinrong.cn
+VITE_API_BASE_URL=https://api.liujinrong.cn
 ```
 
-如需覆盖：
+管理员账号、密码和 JWT 密钥只配置在后端，不应放入本仓库。
+
+## 功能
+
+- 工作台与服务健康状态
+- 用户查询、金额记录、关注清单和流水管理
+- 反馈状态、优先级与处理备注
+- 热门内容、版本日志、交流与支持资源
+- 小程序功能开关和图片地址配置
+- 后台操作记录
+
+## 验证
 
 ```bash
-cp .env.example .env.local
+pnpm build
 ```
 
-```text
-VITE_API_BASE_URL=https://api.liujinrong.cn
-```
-
-## 登录
-
-当前 bootstrap 管理员由后端环境变量提供：
-
-```text
-ADMIN_BOOTSTRAP_EMAIL
-ADMIN_BOOTSTRAP_PASSWORD
-```
-
-登录后前端会把 Admin JWT 保存在 `localStorage`，后续请求使用：
-
-```http
-Authorization: Bearer <token>
-```
-
-## 已实现模块
-
-- 登录 / 退出
-- 概览 Dashboard
-- 用户搜索与用户详情
-- 反馈处理
-- 热门基金新增与启停
-- 更新日志查看
-- 系统配置切换
-- 操作审计查看
-
-## 部署
-
-推荐部署到 Vercel，域名可绑定：
-
-```text
-admin.liujinrong.cn
-```
-
-Vercel 环境变量：
-
-```text
-VITE_API_BASE_URL=https://api.liujinrong.cn
-```
-
+生产站点使用 Hash 路由，不需要额外配置页面重写规则。
