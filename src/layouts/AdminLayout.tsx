@@ -1,5 +1,6 @@
 import {
   AppstoreOutlined,
+  AreaChartOutlined,
   DashboardOutlined,
   FileSearchOutlined,
   LogoutOutlined,
@@ -21,6 +22,7 @@ const navigation = [
   { key: '/users', icon: <UserOutlined />, label: '用户数据' },
   { key: '/feedback', icon: <MessageOutlined />, label: '反馈处理' },
   { key: '/content', icon: <AppstoreOutlined />, label: '内容配置' },
+  { key: '/market', icon: <AreaChartOutlined />, label: '行情配置' },
   { key: '/settings', icon: <SettingOutlined />, label: '系统设置' },
   { key: '/audit', icon: <FileSearchOutlined />, label: '操作记录' },
 ];

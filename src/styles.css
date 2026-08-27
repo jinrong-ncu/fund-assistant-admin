@@ -45,6 +45,23 @@ body { background: #f5f7fb; color: #172033; }
 .audit-json { margin-top: 22px; width: 100%; }
 .audit-json > div { width: 100%; }
 .audit-json pre { background: #0f172a; border-radius: 8px; color: #dbeafe; font-size: 12px; line-height: 1.55; margin: 0; max-height: 300px; overflow: auto; padding: 14px; white-space: pre-wrap; word-break: break-all; }
+.market-editor-card { border-color: #dbe5f3; }
+.market-default-tab { margin-bottom: 16px; }
+.market-default-tab .ant-select { min-width: 220px; }
+.market-stock-select { min-width: 320px; }
+.market-label-input { width: 200px; }
+.market-icon-input { text-align: center; width: 62px; }
+.market-title-input { min-width: 190px; width: 240px; }
+.market-type-select { width: 150px; }
+.market-tab-name-input { width: 280px; }
+.market-section-title-input { width: 260px; }
+.market-section-card { background: #f8fafc; border-color: #dbe5f3; }
+.market-section-card > .ant-card-head { background: #f1f5f9; }
+.market-module-card { background: #fff; border-color: #e5e7eb; }
+.market-module-stocks { margin-top: 12px; }
+.market-field-help { display: block; font-size: 12px; margin-top: 7px; }
+.market-stock-alert { margin-bottom: 16px; }
+.market-search-results { margin-top: 16px; }
 .ant-table-wrapper { background: #fff; }
 @media (max-width: 800px) {
   .admin-content { padding: 18px 12px; }
@@ -52,4 +69,5 @@ body { background: #f5f7fb; color: #172033; }
   .page-heading { align-items: flex-start !important; }
   .config-row { align-items: flex-start !important; flex-direction: column; padding: 16px 0; }
   .config-input { width: 100%; }
+  .market-stock-select, .market-label-input, .market-title-input, .market-tab-name-input, .market-section-title-input { width: 100%; }
 }

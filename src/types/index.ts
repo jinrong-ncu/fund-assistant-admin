@@ -54,6 +54,68 @@ export type SystemConfig = { key: string; value: string; description?: string | 
 export type ResourceEntry = { id: string; category: 'community' | 'support'; channel: string; title: string; description?: string | null; image_url?: string | null; action_type: string; action_value?: string | null; enabled: boolean; sort_order: number };
 export type AuditLog = { id: string; admin_id: string; action: string; target_type: string; target_id?: string | null; before_data?: unknown; after_data?: unknown; reason?: string | null; created_at: string; ip?: string | null };
 
+export type MarketStock = {
+  secid: string;
+  code: string;
+  market: number;
+  name: string;
+  exchange: string;
+  securityType: string;
+  sourceUpdatedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type MarketStockSearchResult = Pick<
+  MarketStock,
+  'secid' | 'code' | 'market' | 'name' | 'exchange' | 'securityType'
+>;
+
+export type MarketTickerLayout = {
+  secid: string;
+  label: string;
+  enabled: boolean;
+  sortOrder: number;
+};
+
+export type MarketModuleLayout = {
+  id: string;
+  title: string;
+  icon: string;
+  type: 'DIRECT' | 'AVERAGE';
+  enabled: boolean;
+  sortOrder: number;
+  stockSecids: string[];
+};
+
+export type MarketSectionLayout = {
+  id: string;
+  title: string;
+  enabled: boolean;
+  sortOrder: number;
+  modules: MarketModuleLayout[];
+};
+
+export type MarketTabLayout = {
+  key: string;
+  label: string;
+  enabled: boolean;
+  sortOrder: number;
+  sections: MarketSectionLayout[];
+};
+
+export type MarketLayout = {
+  defaultTabKey: string;
+  tickers: MarketTickerLayout[];
+  tabs: MarketTabLayout[];
+};
+
+export type AdminMarketConfig = {
+  version: number;
+  stocks: MarketStock[];
+  layout: MarketLayout;
+};
+
 export type UserDetails = {
   holdings: HoldingRow[];
   watchlist: WatchlistRow[];

@@ -9,6 +9,7 @@ const ContentPage = lazy(() => import('@/pages/ContentPage'));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const FeedbackPage = lazy(() => import('@/pages/FeedbackPage'));
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
+const MarketConfigPage = lazy(() => import('@/pages/MarketConfigPage'));
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
 const UsersPage = lazy(() => import('@/pages/UsersPage'));
 
@@ -36,6 +37,7 @@ export const router = createHashRouter([
       { path: 'users', element: <Page><UsersPage /></Page> },
       { path: 'feedback', element: <Page><FeedbackPage /></Page> },
       { path: 'content', element: <Page><ContentPage /></Page> },
+      { path: 'market', element: <Page><MarketConfigPage /></Page> },
       { path: 'settings', element: <Page><SettingsPage /></Page> },
       { path: 'audit', element: <Page><AuditPage /></Page> },
     ],

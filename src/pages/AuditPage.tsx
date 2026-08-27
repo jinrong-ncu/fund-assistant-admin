@@ -7,7 +7,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { adminApi } from '@/services/admin-api';
 import type { AuditLog } from '@/types';
 
-const actionNames: Record<string, string> = { 'transaction.update': '修改流水', 'transaction.delete': '删除流水', 'holding.recalculate': '重新计算', 'feedback.update': '处理反馈', 'hot_fund.create': '新增热门内容', 'hot_fund.update': '编辑热门内容', 'hot_fund.delete': '删除热门内容', 'changelog.create': '新增版本日志', 'changelog.update': '编辑版本日志', 'changelog.delete': '删除版本日志', 'config.upsert': '修改系统配置', 'resource.create': '新增资源', 'resource.update': '编辑资源', 'resource.delete': '删除资源' };
+const actionNames: Record<string, string> = { 'transaction.update': '修改流水', 'transaction.delete': '删除流水', 'holding.recalculate': '重新计算', 'feedback.update': '处理反馈', 'hot_fund.create': '新增热门内容', 'hot_fund.update': '编辑热门内容', 'hot_fund.delete': '删除热门内容', 'changelog.create': '新增版本日志', 'changelog.update': '编辑版本日志', 'changelog.delete': '删除版本日志', 'config.upsert': '修改系统配置', 'resource.create': '新增资源', 'resource.update': '编辑资源', 'resource.delete': '删除资源', 'market.layout.update': '保存行情编排', 'market.stock.create': '新增行情股票', 'market.stock.refresh': '刷新行情股票', 'market.stock.delete': '删除行情股票' };
 const dateTime = (value: string) => new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'medium' }).format(new Date(value));
 
 export default function AuditPage() {

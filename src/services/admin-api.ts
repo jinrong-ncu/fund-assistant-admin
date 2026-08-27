@@ -1,5 +1,5 @@
 import { jsonRequest, request } from './request';
-import type { AuditLog, Changelog, DashboardSummary, FeedbackRow, HealthSummary, HotFund, Paginated, ResourceEntry, SystemConfig, TransactionRow, UserDetails, UserRow } from '@/types';
+import type { AdminMarketConfig, AuditLog, Changelog, DashboardSummary, FeedbackRow, HealthSummary, HotFund, MarketLayout, MarketStock, MarketStockSearchResult, Paginated, ResourceEntry, SystemConfig, TransactionRow, UserDetails, UserRow } from '@/types';
 
 export const adminApi = {
   dashboard: () => request<DashboardSummary>('/api/admin/dashboard/summary'),
@@ -39,5 +39,11 @@ export const adminApi = {
   deleteResource: (id: string) => request(`/api/admin/resources/${id}`, jsonRequest('DELETE', { reason: '后台删除资源' })),
   configs: () => request<SystemConfig[]>('/api/admin/configs'),
   saveConfig: (item: SystemConfig, value: string) => request(`/api/admin/configs/${encodeURIComponent(item.key)}`, jsonRequest('PUT', { value, description: item.description, reason: `后台修改 ${item.key}` })),
+  marketConfig: () => request<AdminMarketConfig>('/api/admin/market-config'),
+  saveMarketLayout: (layout: MarketLayout) => request<{ version: number; layout: MarketLayout }>('/api/admin/market-config/layout', jsonRequest('PUT', { layout, reason: '后台保存行情页面编排' })),
+  searchMarketStocks: (keyword: string) => request<MarketStockSearchResult[]>(`/api/admin/market-stocks/search?keyword=${encodeURIComponent(keyword)}`),
+  resolveMarketStock: (secid: string) => request<MarketStock>('/api/admin/market-stocks/resolve', jsonRequest('POST', { secid, reason: '后台从东财加入股票库' })),
+  refreshMarketStock: (secid: string) => request<MarketStock>(`/api/admin/market-stocks/${encodeURIComponent(secid)}/refresh`, jsonRequest('PUT', { reason: '后台从东财刷新股票信息' })),
+  deleteMarketStock: (secid: string) => request(`/api/admin/market-stocks/${encodeURIComponent(secid)}`, jsonRequest('DELETE', { reason: '后台删除未被引用的股票' })),
   auditLogs: (page: number, pageSize: number) => request<Paginated<AuditLog>>(`/api/admin/audit-logs?page=${page}&pageSize=${pageSize}`),
 };
