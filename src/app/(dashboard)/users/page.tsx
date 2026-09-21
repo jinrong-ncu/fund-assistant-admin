@@ -144,13 +144,17 @@ export default function UsersPage() {
       ),
     },
     {
-      accessorKey: 'updated_at',
+      accessorKey: 'last_active_at',
       header: '最后活跃',
-      cell: ({ row }) => (
-        <span className="text-xs text-muted-foreground tabular-nums">
-          {formatDateTime(row.original.updated_at)}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const time =
+          row.original.last_active_at || row.original.last_login_at || row.original.updated_at;
+        return (
+          <span className="text-xs text-muted-foreground tabular-nums">
+            {time ? formatDateTime(time) : '-'}
+          </span>
+        );
+      },
     },
     {
       id: 'actions',

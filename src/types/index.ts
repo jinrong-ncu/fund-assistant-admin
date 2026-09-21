@@ -53,6 +53,8 @@ export type UserRow = {
   avatar_url?: string | null;
   created_at: string;
   updated_at: string;
+  last_login_at?: string | null;
+  last_active_at?: string | null;
   holdingsCount: number;
   watchlistCount: number;
   feedbackCount: number;

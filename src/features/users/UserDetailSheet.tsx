@@ -182,7 +182,7 @@ export function UserDetailSheet({ user, open, onOpenChange }: UserDetailSheetPro
                   最后活跃
                 </div>
                 <div className="text-xs font-semibold text-foreground tabular-nums truncate">
-                  {formatDateTime(user.updated_at)}
+                  {formatDateTime(user.last_active_at || user.last_login_at || user.updated_at)}
                 </div>
               </div>
 
