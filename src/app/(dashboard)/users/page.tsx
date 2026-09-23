@@ -14,7 +14,22 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/admin/CopyButton';
 import { formatDateTime } from '@/lib/formatters';
-import { Eye, Users } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, Eye } from 'lucide-react';
+
+type UserSortBy =
+  | 'holdingsCount'
+  | 'watchlistCount'
+  | 'feedbackCount'
+  | 'created_at'
+  | 'last_active_at';
+type SortDir = 'asc' | 'desc';
+const sortFields: UserSortBy[] = [
+  'holdingsCount',
+  'watchlistCount',
+  'feedbackCount',
+  'created_at',
+  'last_active_at',
+];
 
 export default function UsersPage() {
   const router = useRouter();
@@ -25,6 +40,11 @@ export default function UsersPage() {
   const pageParam = Math.max(1, Number(searchParams.get('page')) || 1);
   const pageSizeParam = Number(searchParams.get('pageSize')) || 20;
   const searchParam = searchParams.get('keyword') || searchParams.get('search') || '';
+  const sortByParam = searchParams.get('sortBy');
+  const sortBy: UserSortBy = sortFields.includes(sortByParam as UserSortBy)
+    ? (sortByParam as UserSortBy)
+    : 'created_at';
+  const sortDir: SortDir = searchParams.get('sortDir') === 'asc' ? 'asc' : 'desc';
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: pageParam - 1,
@@ -37,24 +57,61 @@ export default function UsersPage() {
     setSearchInput(searchParam);
   }, [searchParam]);
 
+  useEffect(() => {
+    setPagination({ pageIndex: pageParam - 1, pageSize: pageSizeParam });
+  }, [pageParam, pageSizeParam]);
+
   // Sync to URL
-  const updateUrl = (page: number, pageSize: number, keyword: string) => {
+  const updateUrl = (
+    page: number,
+    pageSize: number,
+    keyword: string,
+    nextSortBy = sortBy,
+    nextSortDir = sortDir
+  ) => {
     const params = new URLSearchParams();
     if (page > 1) params.set('page', String(page));
     if (pageSize !== 20) params.set('pageSize', String(pageSize));
     if (keyword.trim()) params.set('keyword', keyword.trim());
-    router.replace(`${pathname}?${params.toString()}`);
+    if (nextSortBy !== 'created_at' || nextSortDir !== 'desc') {
+      params.set('sortBy', nextSortBy);
+      params.set('sortDir', nextSortDir);
+    }
+    router.replace(`${pathname}${params.size ? `?${params.toString()}` : ''}`);
+  };
+
+  const changeSort = (field: UserSortBy) => {
+    const nextDir: SortDir = field === sortBy && sortDir === 'desc' ? 'asc' : 'desc';
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    updateUrl(1, pagination.pageSize, searchParam, field, nextDir);
+  };
+
+  const sortHeader = (label: string, field: UserSortBy) => {
+    const Icon = sortBy === field ? (sortDir === 'asc' ? ArrowUp : ArrowDown) : ArrowUpDown;
+    return (
+      <button
+        type="button"
+        onClick={() => changeSort(field)}
+        className="inline-flex items-center gap-1 hover:text-foreground"
+        aria-label={`${label}排序，当前${sortBy === field ? (sortDir === 'asc' ? '升序' : '降序') : '未排序'}`}
+      >
+        {label}
+        <Icon className="h-3.5 w-3.5" />
+      </button>
+    );
   };
 
   // Fetch users query
   const { data, isLoading, refetch, isFetching } = useQuery({
-    queryKey: ['users', pagination.pageIndex, pagination.pageSize, searchParam],
+    queryKey: ['users', pagination.pageIndex, pagination.pageSize, searchParam, sortBy, sortDir],
     queryFn: () => {
       const params = new URLSearchParams({
         page: String(pagination.pageIndex + 1),
         pageSize: String(pagination.pageSize),
       });
       if (searchParam.trim()) params.set('keyword', searchParam.trim());
+      params.set('sortBy', sortBy);
+      params.set('sortDir', sortDir);
       return apiClient.get<Paginated<UserRow>>(`/api/admin/users?${params.toString()}`);
     },
   });
@@ -109,7 +166,7 @@ export default function UsersPage() {
     },
     {
       accessorKey: 'holdingsCount',
-      header: '持仓数',
+      header: () => sortHeader('持仓数', 'holdingsCount'),
       cell: ({ row }) => (
         <span className="font-mono tabular-nums text-xs">
           {row.original.holdingsCount}
@@ -118,7 +175,7 @@ export default function UsersPage() {
     },
     {
       accessorKey: 'watchlistCount',
-      header: '关注数',
+      header: () => sortHeader('关注数', 'watchlistCount'),
       cell: ({ row }) => (
         <span className="font-mono tabular-nums text-xs">
           {row.original.watchlistCount}
@@ -127,7 +184,7 @@ export default function UsersPage() {
     },
     {
       accessorKey: 'feedbackCount',
-      header: '反馈数',
+      header: () => sortHeader('反馈数', 'feedbackCount'),
       cell: ({ row }) => (
         <span className="font-mono tabular-nums text-xs">
           {row.original.feedbackCount}
@@ -136,7 +193,7 @@ export default function UsersPage() {
     },
     {
       accessorKey: 'created_at',
-      header: '注册时间',
+      header: () => sortHeader('注册时间', 'created_at'),
       cell: ({ row }) => (
         <span className="text-xs text-muted-foreground tabular-nums">
           {formatDateTime(row.original.created_at)}
@@ -145,7 +202,7 @@ export default function UsersPage() {
     },
     {
       accessorKey: 'last_active_at',
-      header: '最后活跃',
+      header: () => sortHeader('最后活跃时间', 'last_active_at'),
       cell: ({ row }) => {
         const time =
           row.original.last_active_at || row.original.last_login_at || row.original.updated_at;
