@@ -260,6 +260,13 @@ export function UserDetailSheet({ user, open, onOpenChange }: UserDetailSheetPro
                 <>
                   {/* Holdings Tab */}
                   <TabsContent value="holdings" className="m-0 space-y-3">
+                    <div className="flex flex-wrap gap-2">
+                      {details?.groups?.map((group) => (
+                        <span key={group.id} className="rounded-full bg-muted px-3 py-1 text-xs text-foreground">
+                          {group.name} ({details.holdings.filter((holding) => (holding.group_id || 'default-group') === group.id).length})
+                        </span>
+                      ))}
+                    </div>
                     {details?.holdings?.length === 0 ? (
                       <div className="text-center py-16 text-xs text-muted-foreground rounded-lg border border-dashed border-border bg-card/40">
                         该用户暂无持仓资产数据
@@ -270,6 +277,7 @@ export function UserDetailSheet({ user, open, onOpenChange }: UserDetailSheetPro
                           <thead className="bg-muted/60 border-b border-border">
                             <tr>
                               <th className="p-3 text-left font-semibold">基金标的</th>
+                              <th className="p-3 text-left font-semibold">分组</th>
                               <th className="p-3 text-right font-semibold">最新市值</th>
                               <th className="p-3 text-right font-semibold">持仓成本</th>
                               <th className="p-3 text-right font-semibold">持有份额</th>
@@ -284,6 +292,9 @@ export function UserDetailSheet({ user, open, onOpenChange }: UserDetailSheetPro
                                   <div className="font-mono text-muted-foreground text-[11px] mt-0.5">
                                     {h.fund_code}
                                   </div>
+                                </td>
+                                <td className="p-3 text-muted-foreground">
+                                  {h.group_name?.trim() || '默认'}
                                 </td>
                                 <td className="p-3 text-right font-mono tabular-nums font-bold text-foreground">
                                   ¥{formatCurrency(h.current_value)}

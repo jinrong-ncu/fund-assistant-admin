@@ -64,6 +64,8 @@ export type HoldingRow = {
   id?: string;
   fund_code: string;
   fund_name: string;
+  group_id?: string | null;
+  group_name?: string | null;
   current_value?: number;
   cost_amount?: number;
   shares?: number;
@@ -235,6 +237,7 @@ export type AdminMarketConfig = {
 
 export type UserDetails = {
   holdings: HoldingRow[];
+  groups: { id: string; name: string; created_at: string | null }[];
   watchlist: WatchlistRow[];
   transactions: TransactionRow[];
   feedback: FeedbackRow[];

@@ -11,13 +11,14 @@ export const adminApi = {
   },
   userDetails: async (openid: string): Promise<UserDetails> => {
     const encoded = encodeURIComponent(openid);
-    const [holdings, watchlist, transactions, feedback] = await Promise.all([
+    const [holdings, groups, watchlist, transactions, feedback] = await Promise.all([
       request<UserDetails['holdings']>(`/api/admin/users/${encoded}/holdings`),
+      request<UserDetails['groups']>(`/api/admin/users/${encoded}/groups`),
       request<UserDetails['watchlist']>(`/api/admin/users/${encoded}/watchlist`),
       request<UserDetails['transactions']>(`/api/admin/users/${encoded}/transactions`),
       request<UserDetails['feedback']>(`/api/admin/users/${encoded}/feedback`),
     ]);
-    return { holdings, watchlist, transactions, feedback };
+    return { holdings, groups, watchlist, transactions, feedback };
   },
   updateTransaction: (id: string, payload: Partial<TransactionRow> & { reason: string }) => request(`/api/admin/transactions/${id}`, jsonRequest('PUT', payload)),
   deleteTransaction: (id: string, reason: string) => request(`/api/admin/transactions/${id}`, jsonRequest('DELETE', { reason })),
