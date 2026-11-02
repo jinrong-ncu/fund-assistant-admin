@@ -36,6 +36,7 @@ export default function DashboardPage() {
   } = useQuery({
     queryKey: ['dashboard', 'summary'],
     queryFn: () => apiClient.get<DashboardSummary>('/api/admin/dashboard/summary'),
+    refetchInterval: 60 * 1000,
   });
 
   const {
@@ -75,8 +76,7 @@ export default function DashboardPage() {
         }
       />
 
-      {/* 6 Standard Metric Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title="全部用户"
           value={summary?.users ?? 0}
@@ -89,6 +89,14 @@ export default function DashboardPage() {
           value={summary?.newUsersToday ?? 0}
           icon={<UserPlus className="h-4 w-4" />}
           iconColor="text-cyan-500"
+          loading={summaryLoading}
+        />
+        <MetricCard
+          title="今日活跃"
+          value={summary?.activeUsersToday ?? '--'}
+          icon={<Activity className="h-4 w-4" />}
+          iconColor="text-teal-500"
+          description="北京时间今日登录或调用接口的用户"
           loading={summaryLoading}
         />
         <MetricCard

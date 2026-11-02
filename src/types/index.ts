@@ -20,6 +20,7 @@ export type Paginated<T> = {
 export type DashboardSummary = {
   users: number;
   newUsersToday: number;
+  activeUsersToday: number;
   holdingsUsers: number;
   watchlistUsers: number;
   feedback: { total: number; open: number };
